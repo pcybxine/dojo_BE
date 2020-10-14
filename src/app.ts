@@ -29,7 +29,7 @@ app.post('/', (req, res) => {
     const {id, text, complete} = req.body
     number += 1;
     if(id || complete != undefined) return res.status(400).send({msg: 'error ja'});
-    let todo = {
+    const todo = {
         "id": number,
         "text": text,
         "complete": false

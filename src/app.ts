@@ -1,98 +1,58 @@
-import express, { Application, Request, Response } from 'express';
+import express from 'express';
 
-const app: Application = express();
+const app = express();
 
 var bodyParser = require('body-parser')
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
-// parse application/json
 app.use(bodyParser.json())
 
-let todoRepositry = [{
-    "id": 1,
-    "text": "Hello",
-    "complete": true
-},{
-    "id": 2,
-    "text": "Hi",
-    "complete": false
-},{
-    "id": 3,
-    "text": "Ei",
-    "complete": true
-}]
+type todoInterface = {
+    "id": number,
+    "text": string,
+    "complete": boolean
+}
 
-app.get('/', (req: Request, res: Response) => {
+let number = 0;
+
+let todoRepositry: todoInterface[] = []
+
+app.get('/', (req, res) => {
     res.send(todoRepositry);
 });
 
-app.get('/:id', (req: Request, res: Response) => {
+app.get('/:id', (req, res) => {
     const todo = todoRepositry.find(m => m.id === parseInt(req.params.id));
-    //let id = todoRepositry[1].id
-    if (todo) {
-        res.send(todo);  
-    }
-    else {
-        res.json({
-            status: 400,
-            message: "HTTP status 400"
-        });
-    }
+    if (!todo) return res.status(400).send({msg: 'error ja'});
+    res.send(todo);
 });
 
-app.post('/', (req: Request, res: Response) => {
-    const reqId = req.body.id;
-    const reqText = req.body.text;
-    const reqComplete = req.body.complete;
-    if (reqId || reqComplete != null || !reqText){
-        res.json({
-            status: 400,
-            message: "HTTP status 400"
-        });
-    }
-    else{
-        let todo = {
-            "id": todoRepositry.length + 1,
-            "text": reqText,
-            "complete": false
-        };
-
-        todoRepositry.push(todo);
-        res.send(todoRepositry);
-    }
-
+app.post('/', (req, res) => {
+    const {id, text, complete} = req.body
+    number += 1;
+    if(id || complete != undefined) return res.status(400).send({msg: 'error ja'});
+    const todo = {
+        "id": number,
+        "text": text,
+        "complete": false
+    };
+    todoRepositry.push(todo);
+    res.send(todoRepositry);
 });
 
-app.delete('/:id', (req: Request, res: Response) => {
+app.delete('/:id', (req, res) => {
     const todo = todoRepositry.find(m => m.id === parseInt(req.params.id));
-    if (todo) {
-        const index = todoRepositry.indexOf(todo);
-        todoRepositry.splice(index, 1);
-        res.send(todoRepositry);
-    }
-    else {
-        res.json({
-            status: 400,
-            message: "HTTP status 400"
-        });
-    }
+    if(!todo) return res.status(400).send({msg: 'error ja'});
+    const index = todoRepositry.indexOf(todo);
+    todoRepositry.splice(index, 1);
+    res.send(todoRepositry);
 });
 
-app.patch('/:id', (req: Request, res: Response) => {
-    let reqText = req.body.text;
-    let reqComplete = req.body.complete;
+app.patch('/:id', (req, res) => {
+    const {text, complete} = req.body
     const todo = todoRepositry.find(m => m.id === parseInt(req.params.id));
-    if (todo) {
-        if (reqText != null) todo.text = reqText;
-        if (reqComplete != null) todo.complete = reqComplete; 
-        res.send(todoRepositry);
-    }
-    else {
-        res.json({
-            status: 400,
-            message: "HTTP status 400"
-        });
-    }
+    if(!todo) return res.status(400).send({msg: 'error ja eiei'});
+    todo.text = text || todo.text
+    todo.complete = complete != undefined ? complete: todo.complete
+    res.send(todoRepositry);
 });
 
 app.listen(3000, () => console.log('Surver running'));

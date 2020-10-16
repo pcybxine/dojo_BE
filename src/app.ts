@@ -127,7 +127,8 @@ app.get('/:id', (req, res) => {
         const todo = await getData(id);
         console.log(todo)
         if (!todo) return res.status(400).send({msg: 'error ja'});
-    res.send(todo);
+        res.send(todo.value);
+    })()
 });
 
 app.post('/', (req, res) => {

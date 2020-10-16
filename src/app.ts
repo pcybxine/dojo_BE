@@ -114,7 +114,11 @@ app.get('/search', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send(todoRepositry);
+  (async () => {
+    const todo = await getAllData();
+    console.log(todo)
+    res.send(todo);
+})()
 });
 
 app.get('/:id', (req, res) => {

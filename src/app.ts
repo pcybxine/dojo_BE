@@ -118,8 +118,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/:id', (req, res) => {
-    const todo = todoRepositry.find(m => m.id === parseInt(req.params.id));
-    if (!todo) return res.status(400).send({msg: 'error ja'});
+    const id = req.params.id;
+    (async () => {
+        const todo = await getData(id);
+        console.log(todo)
+        if (!todo) return res.status(400).send({msg: 'error ja'});
     res.send(todo);
 });
 

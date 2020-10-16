@@ -1,4 +1,13 @@
 import express from 'express';
+import couchbase from 'couchbase';
+
+const cluster = new couchbase.Cluster("couchbase://127.0.0.1", {
+  username: "Administrator",
+  password: "123456",
+});
+
+const bucket = cluster.bucket("todo");
+const coll = bucket.defaultCollection();
 
 const app = express();
 

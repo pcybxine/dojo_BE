@@ -135,30 +135,38 @@ app.post('/', (req, res) => {
     const {id, text, complete} = req.body
     number += 1;
     if(id || complete != undefined) return res.status(400).send({msg: 'error ja'});
-    const todo = {
+    const todoRepositry = {
         "id": number,
         "text": text,
         "complete": false
     };
-    todoRepositry.push(todo);
+    upsertDocument(todoRepositry);
     res.send(todoRepositry);
 });
 
 app.delete('/:id', (req, res) => {
-    const todo = todoRepositry.find(m => m.id === parseInt(req.params.id));
-    if(!todo) return res.status(400).send({msg: 'error ja'});
-    const index = todoRepositry.indexOf(todo);
-    todoRepositry.splice(index, 1);
-    res.send(todoRepositry);
+  const id = req.params.id;
+  (async () => {
+    const todo = await removeData(id);
+    console.log(todo)
+    if (!todo) return res.status(400).send({msg: 'error ja'});
+    res.send({msg: 'delete ja'});
+})()
 });
 
 app.patch('/:id', (req, res) => {
-    const {text, complete} = req.body
-    const todo = todoRepositry.find(m => m.id === parseInt(req.params.id));
+  const {id, text, complete, exist} = req.body;
+  const n = req.params.id;
+  (async () => {
+    const todo = await getData(n);
     if(!todo) return res.status(400).send({msg: 'error ja eiei'});
-    todo.text = text || todo.text
-    todo.complete = complete != undefined ? complete: todo.complete
-    res.send(todoRepositry);
+    console.log('cccccccccccc'+todo)
+    todo.content.exist = exist || todo.exist
+    todo.content.text = text || todo.text
+    todo.content.complete = complete != undefined ? complete: todo.complete
+    updateData(n, todo.value);
+    res.send(todo.value);
+  })()
 });
 
-app.listen(3000, () => console.log('Surver running'));
+app.listen(8000, () => console.log('Surver running'));

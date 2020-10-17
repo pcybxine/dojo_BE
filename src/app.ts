@@ -193,7 +193,6 @@ app.post("/", (req, res) => {
 app.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-  (async () => {
     const todo = await removeData(id);
     if (!todo) return res.status(400).send({ msg: "error ja" });
     res.send({ msg: "delete ja" });
@@ -207,18 +206,25 @@ app.delete("/:id", async (req, res) => {
   }
 });
 
-app.patch("/:id", (req, res) => {
-  const { id, text, complete, exist } = req.body;
-  const n = req.params.id;
-  (async () => {
-    const todo = await getData(n);
-    if (!todo) return res.status(400).send({ msg: "error ja eiei" });
-    todo.content.exist = exist || todo.exist;
-    todo.content.text = text || todo.text;
-    todo.content.complete = complete != undefined ? complete : todo.complete;
-    updateData(n, todo.value);
-    res.send(todo.value);
-  })();
+app.patch("/:id", async (req, res) => {
+  try{
+    const { text, complete, exist } = req.body;
+    const n = req.params.id;
+      const todo = await getData(n);
+      if (!todo) return res.status(400).send({ msg: "error ja eiei" });
+      todo.content.exist = exist || todo.exist;
+      todo.content.text = text || todo.text;
+      todo.content.complete = complete != undefined ? complete : todo.complete;
+      updateData(n, todo.value);
+      res.send(todo.value);
+  } catch (error) {
+    if (error instanceof CustomErrorInstance) {
+      switch (error.type) {
+        case CustomErrorEnum.badRequest: return res.status(400).send({ msg: "Bad Request" });
+        case CustomErrorEnum.internalError: return res.status(500).send({ msg: "Internal Server Error" });
+      }
+    }
+  }
 });
 
 app.listen(8000, () => console.log("Surver running"));

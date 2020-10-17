@@ -15,10 +15,24 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
 type todoInterface = {
-  id: number;
-  text: string;
-  complete: boolean;
+  id: number,
+  text: string,
+  complete: boolean
 };
+
+enum CustomErrorEnum {
+  badRequest = 400,
+  internalError = 500,
+}
+
+class CustomErrorInstance extends Error {
+  type: CustomErrorEnum;
+  constructor(type: CustomErrorEnum, msg: string) {
+    super(msg);
+    this.type = type;
+    throw new Error(msg)
+  }
+}
 
 let number = 0;
 

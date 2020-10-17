@@ -190,13 +190,21 @@ app.post("/", (req, res) => {
   }
 });
 
-app.delete("/:id", (req, res) => {
-  const id = req.params.id;
+app.delete("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
   (async () => {
     const todo = await removeData(id);
     if (!todo) return res.status(400).send({ msg: "error ja" });
     res.send({ msg: "delete ja" });
-  })();
+  } catch (error) {
+    if (error instanceof CustomErrorInstance) {
+      switch (error.type) {
+        case CustomErrorEnum.badRequest: return res.status(400).send({ msg: "Bad Request" });
+        case CustomErrorEnum.internalError: return res.status(500).send({ msg: "Internal Server Error" });
+      }
+    }
+  }
 });
 
 app.patch("/:id", (req, res) => {

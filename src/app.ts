@@ -116,6 +116,7 @@ const ftsMatchPhrase = async (phrase: any) => {
   }
 };
 
+//------------------------------------------------------------------------------------------
 app.get("/search", async (req, res) => {
   try {
     const query = req.query.q;
@@ -150,13 +151,20 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/:id", (req, res) => {
-  const id = req.params.id;
-  (async () => {
+app.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
     const todo = await getData(id);
     if (!todo) return res.status(400).send({ msg: "error ja" });
     res.send(todo.value);
-  })();
+  } catch (error) {
+    if (error instanceof CustomErrorInstance) {
+      switch (error.type) {
+        case CustomErrorEnum.badRequest: return res.status(400).send({ msg: "Bad Request" });
+        case CustomErrorEnum.internalError: return res.status(500).send({ msg: "Internal Server Error" });
+      }
+    }
+  }
 });
 
 app.post("/", (req, res) => {

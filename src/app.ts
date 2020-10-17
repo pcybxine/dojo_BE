@@ -35,7 +35,7 @@ class CustomErrorInstance extends Error {
 }
 
 // upsert data to db
-const upsertDocument = async (doc: todoInterface) => {
+const upsertDocument = async (doc: todoInterface): Promise<todoInterface> => {
   try {
     const key = `${uuidv4()}`;
     const result = await coll.upsert(key, doc);
@@ -47,7 +47,7 @@ const upsertDocument = async (doc: todoInterface) => {
 };
 
 // get data from db
-const getData = async (key: string) => {
+const getData = async (key: string): Promise<todoInterface> => {
   try {
     const result = await coll.get(key);
     console.log("aaaa" + result);
@@ -58,7 +58,7 @@ const getData = async (key: string) => {
 };
 
 // remove data from db
-const removeData = async (key: string) => {
+const removeData = async (key: string): Promise<todoInterface> => {
   try {
     const result = await coll.remove(key);
     console.log('aaaa'+result)
@@ -69,7 +69,7 @@ const removeData = async (key: string) => {
 };
 
 // update data
-const updateData = async (key: string, doc: todoInterface) => {
+const updateData = async (key: string, doc: todoInterface): Promise<todoInterface> => {
   try {
     const text = `${doc.text}`;
     const complete = `${doc.complete}`;
@@ -152,7 +152,7 @@ app.get("/:id", async (req, res) => {
     const id = req.params.id;
     const todo = await getData(id);
     if (!todo) return res.status(400).send({ msg: "error ja" });
-    res.send(todo.value);
+    res.send(todo);
   } catch (error) {
     if (error instanceof CustomErrorInstance) {
       switch (error.type) {
@@ -205,11 +205,11 @@ app.patch("/:id", async (req, res) => {
     const n = req.params.id;
       const todo = await getData(n);
       if (!todo) return res.status(400).send({ msg: "error ja eiei" });
-      todo.content.exist = exist || todo.exist;
-      todo.content.text = text || todo.text;
-      todo.content.complete = complete != undefined ? complete : todo.complete;
-      updateData(n, todo.value);
-      res.send(todo.value);
+      //todo.content.exist = exist || todo.exist;
+      todo.text = text || todo.text;
+      todo.complete = complete != undefined ? complete : todo.complete;
+      updateData(n, todo);
+      res.send('update laew ja');
   } catch (error) {
     if (error instanceof CustomErrorInstance) {
       switch (error.type) {

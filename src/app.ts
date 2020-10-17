@@ -168,17 +168,26 @@ app.get("/:id", async (req, res) => {
 });
 
 app.post("/", (req, res) => {
-  const { id, text, complete } = req.body;
-  number += 1;
-  if (id || complete != undefined)
+  try {
+    const { id, text, complete } = req.body;
+    number += 1;
+    if (id || complete != undefined)
     return res.status(400).send({ msg: "error ja" });
-  const todoRepositry = {
-    id: number,
-    text: text,
-    complete: false,
-  };
-  upsertDocument(todoRepositry);
-  res.send(todoRepositry);
+    const todoRepositry = {
+      id: number,
+      text: text,
+      complete: false,
+    };
+    upsertDocument(todoRepositry);
+    res.send(todoRepositry);
+  } catch (error) {
+    if (error instanceof CustomErrorInstance) {
+      switch (error.type) {
+        case CustomErrorEnum.badRequest: return res.status(400).send({ msg: "Bad Request" });
+        case CustomErrorEnum.internalError: return res.status(500).send({ msg: "Internal Server Error" });
+      }
+    }
+  }
 });
 
 app.delete("/:id", (req, res) => {

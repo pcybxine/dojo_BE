@@ -47,7 +47,7 @@ const upsertDocument = async (doc: todoInterface) => {
 };
 
 // get data from db
-const getData = async (key: String) => {
+const getData = async (key: string) => {
   try {
     const result = await coll.get(key);
     console.log("aaaa" + result);
@@ -58,7 +58,7 @@ const getData = async (key: String) => {
 };
 
 // remove data from db
-const removeData = async (key: String) => {
+const removeData = async (key: string) => {
   try {
     const result = await coll.remove(key);
     console.log('aaaa'+result)
@@ -69,7 +69,7 @@ const removeData = async (key: String) => {
 };
 
 // update data
-const updateData = async (key: String, doc: todoInterface) => {
+const updateData = async (key: string, doc: todoInterface) => {
   try {
     const text = `${doc.text}`;
     const complete = `${doc.complete}`;

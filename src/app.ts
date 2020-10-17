@@ -1,5 +1,6 @@
 import express from "express";
 import couchbase from "couchbase";
+import { v4 as uuidv4 } from 'uuid';
 
 const cluster = new couchbase.Cluster("couchbase://127.0.0.1", {
   username: "Administrator",
@@ -15,7 +16,6 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
 type todoInterface = {
-  id: number,
   text: string,
   complete: boolean
 };
@@ -34,14 +34,10 @@ class CustomErrorInstance extends Error {
   }
 }
 
-let number = 0;
-
-let todoRepositry: todoInterface[] = [];
-
 // upsert data to db
 const upsertDocument = async (doc: todoInterface) => {
   try {
-    const key = `${doc.id}`;
+    const key = `${uuidv4()}`;
     const result = await coll.upsert(key, doc);
     console.log('aaaa'+result);
     return result;
@@ -169,12 +165,9 @@ app.get("/:id", async (req, res) => {
 
 app.post("/", (req, res) => {
   try {
-    const { id, text, complete } = req.body;
-    number += 1;
-    if (id || complete != undefined)
-    return res.status(400).send({ msg: "error ja" });
+    const { text, complete } = req.body;
+    if (complete != undefined) return res.status(400).send({ msg: "error ja" });
     const todoRepositry = {
-      id: number,
       text: text,
       complete: false,
     };

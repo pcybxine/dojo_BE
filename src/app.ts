@@ -116,24 +116,38 @@ const ftsMatchPhrase = async (phrase: any) => {
   }
 };
 
-app.get("/search", (req, res) => {
-  (async () => {
+app.get("/search", async (req, res) => {
+  try {
     const query = req.query.q;
     const todo = await ftsMatchPhrase(query);
-    if (!todo) return res.status(400).send({ msg: "mai mee ja" });
+    if (todo.rows.length === 0) return res.status(400).send({ msg: "No Search Resault" });
     const result = todo.rows.map((e: any) => {
       return e;
     });
     res.send(result);
-  })();
+  } catch (error) {
+    if (error instanceof CustomErrorInstance) {
+      switch (error.type) {
+        case CustomErrorEnum.badRequest: return res.status(400).send({ msg: "Bad Request" });
+        case CustomErrorEnum.internalError: return res.status(500).send({ msg: "Internal Server Error" });
+      }
+    }
+  }
 });
 
-app.get("/", (req, res) => {
-  (async () => {
+app.get("/", async (req, res) => {
+  try {
     const todo = await getAllData();
     console.log(todo);
     res.send(todo);
-  })();
+  } catch (error) {
+    if (error instanceof CustomErrorInstance) {
+      switch (error.type) {
+        case CustomErrorEnum.badRequest: return res.status(400).send({ msg: "Bad Request" });
+        case CustomErrorEnum.internalError: return res.status(500).send({ msg: "Internal Server Error" });
+      }
+    }
+  }
 });
 
 app.get("/:id", (req, res) => {

@@ -138,7 +138,7 @@ app.get("/search", async (req, res) => {
 app.get("/", async (req, res) => {
   try {
     const todo = await getAllData();
-    console.log(todo);
+    if (!todo) return res.send('empty list ja')
     res.send(todo);
   } catch (error) {
     if (error instanceof CustomErrorInstance) {

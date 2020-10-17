@@ -46,7 +46,7 @@ const upsertDocument = async (doc: todoInterface) => {
     console.log('aaaa'+result);
     return result;
   } catch (error) {
-    console.error(error);
+    throw new CustomErrorInstance(CustomErrorEnum.internalError, 'db error')
   }
 };
 
@@ -57,7 +57,7 @@ const getData = async (key: String) => {
     console.log("aaaa" + result);
     return result;
   } catch (error) {
-    console.error(error);
+    throw new CustomErrorInstance(CustomErrorEnum.internalError, 'db error')
   }
 };
 
@@ -68,7 +68,7 @@ const removeData = async (key: String) => {
     console.log('aaaa'+result)
     return result;
   } catch (error) {
-    console.error(error);
+    throw new CustomErrorInstance(CustomErrorEnum.internalError, 'db error')
   }
 };
 
@@ -84,7 +84,7 @@ const updateData = async (key: String, doc: todoInterface) => {
     console.log("bbbbb" + result);
     return result;
   } catch (error) {
-    console.error(error);
+    throw new CustomErrorInstance(CustomErrorEnum.internalError, 'db error')
   }
 };
 
@@ -99,7 +99,7 @@ const getAllData = async () => {
     });
     return result;
   } catch (error) {
-    console.error(error);
+    throw new CustomErrorInstance(CustomErrorEnum.internalError, 'db error')
   }
 };
 
@@ -112,7 +112,7 @@ const ftsMatchPhrase = async (phrase: any) => {
       { limit: 10 }
     );
   } catch (error) {
-    console.error(error);
+    throw new CustomErrorInstance(CustomErrorEnum.internalError, 'db error')
   }
 };
 
